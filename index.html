@@ -318,6 +318,14 @@
       padding: .5rem .8rem;
       border-radius: 6px;
       line-height: 1.6;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .report-emoji {
+      font-size: 1.6rem;
+      flex-shrink: 0;
     }
 
     @media (max-width: 480px) {
@@ -813,6 +821,10 @@
     if      (expenseDiff < 0) parts.push(`지출이 <b>${fmt(-expenseDiff)}</b> 절감`);
     else if (expenseDiff > 0) parts.push(`지출이 <b>${fmt(expenseDiff)}</b> 증가`);
 
+    const reactionEmoji = (incomeDiff > 0 && expenseDiff < 0) ? '🥳'
+                        : (incomeDiff < 0 && expenseDiff > 0) ? '😡'
+                        : '';
+
     const summary = parts.length
       ? `이번 달은 지난달보다 ${parts.join(', ')}했습니다.`
       : '지난달과 수입·지출에 변동이 없습니다.';
@@ -832,7 +844,10 @@
           <div class="ri-prev">지난달 ${fmt(prevExpense)}</div>
         </div>
       </div>
-      <div class="report-summary">${summary}</div>
+      <div class="report-summary">
+        ${reactionEmoji ? `<span class="report-emoji">${reactionEmoji}</span>` : ''}
+        ${summary}
+      </div>
     `;
   }
 
