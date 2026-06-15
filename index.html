@@ -418,7 +418,7 @@
     <table>
       <thead>
         <tr>
-          <th>날짜</th>
+          <th id="thDate" class="sortable" onclick="setSort('date')">날짜</th>
           <th id="thType" class="sortable" onclick="setSort('type')">구분</th>
           <th id="thCategory" class="sortable" onclick="setSort('category')">카테고리</th>
           <th>내용</th>
@@ -750,6 +750,7 @@
       });
 
     // 정렬 헤더 인디케이터 업데이트
+    document.getElementById('thDate').textContent     = (sortState.col === 'date'     ? (sortState.dir === 'asc' ? '▲ ' : '▼ ') : '') + '날짜';
     document.getElementById('thType').textContent     = (sortState.col === 'type'     ? (sortState.dir === 'asc' ? '▲ ' : '▼ ') : '') + '구분';
     document.getElementById('thCategory').textContent = (sortState.col === 'category' ? (sortState.dir === 'asc' ? '▲ ' : '▼ ') : '') + '카테고리';
 
