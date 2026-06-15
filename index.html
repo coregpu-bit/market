@@ -267,15 +267,50 @@
       font-size: .85rem;
     }
 
-    @media (max-width: 640px) {
-      .charts { grid-template-columns: 1fr; }
+    /* 테이블 가로 스크롤 */
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+    /* ── 태블릿 (≤ 768px) ── */
+    @media (max-width: 768px) {
+      .container { margin: 1rem auto; }
+      .form-row {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+      .add-btn-wrap { grid-column: 1 / -1; }
+      .add-btn-wrap button { width: 100%; }
     }
 
-    @media (max-width: 640px) {
-      .summary { grid-template-columns: repeat(3, 1fr); }
+    /* ── 모바일 (≤ 480px) ── */
+    @media (max-width: 480px) {
+      header { font-size: 1.1rem; padding: .75rem 1rem; }
+      .container { margin: .75rem auto; padding: 0 .75rem; }
+
+      /* 요약 카드 */
+      .summary { gap: .5rem; margin-bottom: 1rem; }
+      .card { padding: .75rem .5rem; }
+      .card .label { font-size: .65rem; }
+      .card .amount { font-size: 1rem; }
+
+      /* 그래프 */
+      .charts { grid-template-columns: 1fr; margin-bottom: 1rem; }
+      .chart-wrap, .chart-empty { height: 170px; }
+
+      /* 입력 폼 */
+      .form-box { padding: 1rem; margin-bottom: 1rem; }
       .form-row { grid-template-columns: 1fr 1fr; }
-      .form-row .add-btn-wrap { grid-column: span 2; }
-      table { font-size: .8rem; }
+      /* 내용·금액 한 줄씩 */
+      .form-row .form-group:nth-child(4),
+      .form-row .form-group:nth-child(5) { grid-column: span 2; }
+      .add-btn-wrap { grid-column: 1 / -1; }
+      .add-btn-wrap button { width: 100%; }
+
+      /* 필터 */
+      .filter-bar { gap: .4rem; }
+      .filter-bar label { font-size: .8rem; }
+
+      /* 테이블 */
+      table { font-size: .78rem; min-width: 460px; }
+      thead th, td { padding: .5rem .6rem; }
     }
   </style>
 </head>
@@ -370,6 +405,7 @@
   <!-- 목록 -->
   <div class="list-box">
     <h2>거래 내역</h2>
+    <div class="table-wrap">
     <table>
       <thead>
         <tr>
@@ -383,6 +419,7 @@
       </thead>
       <tbody id="txList"></tbody>
     </table>
+    </div>
     <div class="empty" id="emptyMsg" style="display:none">거래 내역이 없습니다.</div>
   </div>
 
