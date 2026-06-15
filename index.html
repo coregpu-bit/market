@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>가계부</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -229,6 +230,47 @@
 
     .empty { text-align: center; padding: 2rem; color: #a0aec0; font-size: .9rem; }
 
+    /* 그래프 */
+    .charts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .chart-box {
+      background: white;
+      border-radius: 12px;
+      padding: 1.2rem 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+
+    .chart-box h2 {
+      font-size: .9rem;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: .8rem;
+      text-align: center;
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 210px;
+    }
+
+    .chart-empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 210px;
+      color: #a0aec0;
+      font-size: .85rem;
+    }
+
+    @media (max-width: 640px) {
+      .charts { grid-template-columns: 1fr; }
+    }
+
     @media (max-width: 640px) {
       .summary { grid-template-columns: repeat(3, 1fr); }
       .form-row { grid-template-columns: 1fr 1fr; }
@@ -258,6 +300,18 @@
     <div class="card balance">
       <div class="label">잔액</div>
       <div class="amount" id="totalBalance">₩0</div>
+    </div>
+  </div>
+
+  <!-- 그래프 -->
+  <div class="charts">
+    <div class="chart-box">
+      <h2>📊 카테고리별 지출</h2>
+      <div id="catChartWrap" class="chart-wrap"><canvas id="catChart"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <h2>📈 월별 수입 · 지출</h2>
+      <div id="monthChartWrap" class="chart-wrap"><canvas id="monthChart"></canvas></div>
     </div>
   </div>
 
@@ -500,6 +554,113 @@
     localStorage.setItem('kaebu', JSON.stringify(transactions));
   }
 
+  let catChartInst = null, monthChartInst = null;
+
+  const CAT_COLORS = [
+    '#4299e1','#48bb78','#ed8936','#e53e3e','#9f7aea',
+    '#38b2ac','#f6ad55','#fc8181','#68d391','#76e4f7',
+  ];
+
+  function renderCharts(month) {
+    renderCatChart(month);
+    renderMonthChart(month);
+  }
+
+  function renderCatChart(month) {
+    const wrap = document.getElementById('catChartWrap');
+    const expenses = transactions
+      .filter(t => t.type === 'expense' && (!month || t.date.startsWith(month)));
+
+    if (!expenses.length) {
+      if (catChartInst) { catChartInst.destroy(); catChartInst = null; }
+      wrap.innerHTML = '<div class="chart-empty">지출 데이터가 없습니다</div>';
+      return;
+    }
+
+    if (!wrap.querySelector('canvas')) {
+      wrap.innerHTML = '<canvas id="catChart"></canvas>';
+    }
+
+    const grouped = {};
+    expenses.forEach(t => { grouped[t.category] = (grouped[t.category] || 0) + t.amount; });
+    const labels = Object.keys(grouped);
+    const data   = labels.map(k => grouped[k]);
+
+    if (catChartInst) catChartInst.destroy();
+    catChartInst = new Chart(document.getElementById('catChart'), {
+      type: 'doughnut',
+      data: {
+        labels,
+        datasets: [{ data, backgroundColor: CAT_COLORS, borderWidth: 2, borderColor: '#fff' }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'right', labels: { font: { size: 11 }, boxWidth: 12, padding: 8 } },
+          tooltip: {
+            callbacks: {
+              label: ctx => ` ${ctx.label}: ${fmt(ctx.raw)} (${Math.round(ctx.parsed / data.reduce((a,b)=>a+b,0) * 100)}%)`,
+            },
+          },
+        },
+      },
+    });
+  }
+
+  function renderMonthChart(currentMonth) {
+    const wrap = document.getElementById('monthChartWrap');
+
+    // 최근 6개월 레이블 생성
+    const base = currentMonth
+      ? new Date(currentMonth + '-01')
+      : new Date();
+    const months = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(base.getFullYear(), base.getMonth() - i, 1);
+      months.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`);
+    }
+
+    const incomes  = months.map(m => transactions.filter(t => t.type==='income'  && t.date.startsWith(m)).reduce((s,t)=>s+t.amount,0));
+    const expenses = months.map(m => transactions.filter(t => t.type==='expense' && t.date.startsWith(m)).reduce((s,t)=>s+t.amount,0));
+
+    if (incomes.every(v=>v===0) && expenses.every(v=>v===0)) {
+      if (monthChartInst) { monthChartInst.destroy(); monthChartInst = null; }
+      wrap.innerHTML = '<div class="chart-empty">데이터가 없습니다</div>';
+      return;
+    }
+
+    if (!wrap.querySelector('canvas')) {
+      wrap.innerHTML = '<canvas id="monthChart"></canvas>';
+    }
+
+    const labels = months.map(m => m.slice(5) + '월');
+
+    if (monthChartInst) monthChartInst.destroy();
+    monthChartInst = new Chart(document.getElementById('monthChart'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          { label: '수입', data: incomes,  backgroundColor: 'rgba(72,187,120,.75)', borderRadius: 4 },
+          { label: '지출', data: expenses, backgroundColor: 'rgba(229,62,62,.65)',  borderRadius: 4 },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { font: { size: 11 }, boxWidth: 12 } },
+          tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${fmt(ctx.raw)}` } },
+        },
+        scales: {
+          y: { ticks: { callback: v => '₩' + (v >= 1000000 ? (v/1000000).toFixed(1)+'M' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v), font: { size: 10 } }, grid: { color: '#edf2f7' } },
+          x: { ticks: { font: { size: 11 } }, grid: { display: false } },
+        },
+      },
+    });
+  }
+
   function render() {
     const month    = document.getElementById('filterMonth').value;
     const typeF    = document.getElementById('filterType').value;
@@ -528,6 +689,8 @@
     const balEl = document.getElementById('totalBalance');
     balEl.textContent = fmt(Math.abs(bal));
     balEl.style.color = bal < 0 ? '#e53e3e' : '#2b6cb0';
+
+    renderCharts(month);
 
     const tbody = document.getElementById('txList');
     if (filtered.length === 0) {
