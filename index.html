@@ -11,8 +11,8 @@
 
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #f0f4f8;
-      color: #2d3748;
+      background: #faf5ff;
+      color: #3b1f6e;
       min-height: 100vh;
     }
 
@@ -28,7 +28,7 @@
     }
 
     header {
-      background: #2b6cb0;
+      background: linear-gradient(135deg, #c084fc, #f9a8d4);
       color: white;
       padding: 1rem 2rem;
       text-align: center;
@@ -55,13 +55,13 @@
       background: white;
       border-radius: 12px;
       padding: 1.2rem 1.5rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      box-shadow: 0 2px 12px rgba(192,132,252,.15);
       text-align: center;
     }
 
     .card .label {
       font-size: .8rem;
-      color: #718096;
+      color: #9b89c4;
       margin-bottom: .4rem;
       text-transform: uppercase;
       letter-spacing: .5px;
@@ -72,9 +72,9 @@
       font-weight: 700;
     }
 
-    .card.income  .amount { color: #38a169; }
-    .card.expense .amount { color: #e53e3e; }
-    .card.balance .amount { color: #2b6cb0; }
+    .card.income  .amount { color: #059669; }
+    .card.expense .amount { color: #dc2626; }
+    .card.balance .amount { color: #7c3aed; }
 
     /* 입력 폼 */
     .form-box {
@@ -89,7 +89,7 @@
       font-size: 1rem;
       font-weight: 600;
       margin-bottom: 1rem;
-      color: #4a5568;
+      color: #6d28d9;
     }
 
     .form-row {
@@ -105,17 +105,17 @@
 
     input, select {
       padding: .55rem .75rem;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #e9d8fd;
       border-radius: 8px;
       font-size: .9rem;
       outline: none;
       transition: border-color .2s;
     }
 
-    input:focus, select:focus { border-color: #63b3ed; }
+    input:focus, select:focus { border-color: #d8b4fe; }
 
     button.add-btn {
-      background: #2b6cb0;
+      background: #c084fc;
       color: white;
       border: none;
       border-radius: 8px;
@@ -127,7 +127,7 @@
       transition: background .2s;
     }
 
-    button.add-btn:hover { background: #2c5282; }
+    button.add-btn:hover { background: #a855f7; }
 
     /* 필터 */
     .filter-bar {
@@ -140,7 +140,7 @@
 
     .filter-bar select, .filter-bar input[type="month"] {
       padding: .45rem .75rem;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #e9d8fd;
       border-radius: 8px;
       font-size: .85rem;
       background: white;
@@ -160,8 +160,8 @@
       font-size: 1rem;
       font-weight: 600;
       padding: 1rem 1.5rem;
-      border-bottom: 1px solid #edf2f7;
-      color: #4a5568;
+      border-bottom: 1px solid #ede9fe;
+      color: #6d28d9;
     }
 
     table {
@@ -170,25 +170,25 @@
     }
 
     thead th {
-      background: #f7fafc;
+      background: #f5f0ff;
       padding: .7rem 1rem;
       text-align: left;
       font-size: .78rem;
-      color: #718096;
+      color: #9b89c4;
       text-transform: uppercase;
       letter-spacing: .4px;
     }
 
-    tbody tr { border-top: 1px solid #edf2f7; transition: background .15s; }
-    tbody tr:hover { background: #f7fafc; }
+    tbody tr { border-top: 1px solid #ede9fe; transition: background .15s; }
+    tbody tr:hover { background: #faf5ff; }
 
     td {
       padding: .75rem 1rem;
       font-size: .9rem;
     }
 
-    td.income  { color: #38a169; font-weight: 600; }
-    td.expense { color: #e53e3e; font-weight: 600; }
+    td.income  { color: #059669; font-weight: 600; }
+    td.expense { color: #dc2626; font-weight: 600; }
 
     .badge {
       display: inline-block;
@@ -198,8 +198,8 @@
       font-weight: 600;
     }
 
-    .badge-income  { background: #c6f6d5; color: #276749; }
-    .badge-expense { background: #fed7d7; color: #9b2c2c; }
+    .badge-income  { background: #d1fae5; color: #065f46; }
+    .badge-expense { background: #ffe4e6; color: #9f1239; }
 
     .del-btn {
       background: none;
@@ -210,7 +210,7 @@
       transition: color .2s;
     }
 
-    .del-btn:hover { color: #e53e3e; }
+    .del-btn:hover { color: #f472b6; }
 
     td.desc-cell {
       cursor: text;
@@ -222,11 +222,11 @@
     td.desc-cell input.desc-input {
       width: 100%;
       padding: .25rem .4rem;
-      border: 1.5px solid #63b3ed;
+      border: 1.5px solid #d8b4fe;
       border-radius: 6px;
       font-size: .9rem;
       outline: none;
-      background: #ebf8ff;
+      background: #f5f0ff;
     }
 
     .empty { text-align: center; padding: 2rem; color: #a0aec0; font-size: .9rem; }
@@ -249,7 +249,7 @@
     .chart-box h2 {
       font-size: .9rem;
       font-weight: 600;
-      color: #4a5568;
+      color: #6d28d9;
       margin-bottom: .8rem;
       text-align: center;
     }
@@ -602,8 +602,8 @@
   let catChartInst = null, monthChartInst = null;
 
   const CAT_COLORS = [
-    '#4299e1','#48bb78','#ed8936','#e53e3e','#9f7aea',
-    '#38b2ac','#f6ad55','#fc8181','#68d391','#76e4f7',
+    '#c084fc','#86efac','#fdba74','#fca5a5','#f9a8d4',
+    '#5eead4','#fde68a','#fbcfe8','#a5f3fc','#bef264',
   ];
 
   function renderCharts(month) {
@@ -733,7 +733,7 @@
     const bal = income - expense;
     const balEl = document.getElementById('totalBalance');
     balEl.textContent = fmt(Math.abs(bal));
-    balEl.style.color = bal < 0 ? '#e53e3e' : '#2b6cb0';
+    balEl.style.color = bal < 0 ? '#dc2626' : '#7c3aed';
 
     renderCharts(month);
 
