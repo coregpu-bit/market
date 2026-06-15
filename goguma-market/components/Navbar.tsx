@@ -27,6 +27,12 @@ export default function Navbar({ user }: NavbarProps) {
                 님
               </span>
               <Link
+                href="/products"
+                className="text-sm text-gray-600 hover:text-violet-600 transition-colors"
+              >
+                중고거래
+              </Link>
+              <Link
                 href="/dashboard"
                 className="text-sm text-gray-600 hover:text-violet-600 transition-colors"
               >

@@ -1,14 +1,15 @@
 import Link from 'next/link'
-import GomuCharacter from '@/components/GomuCharacter'
+import HomeHero from '@/components/HomeHero'
+import { createClient } from '@/lib/supabase/server'
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
   return (
     <div className="min-h-[calc(100vh-56px)] flex flex-col">
       {/* Hero */}
       <section className="flex-1 flex flex-col items-center justify-center text-center px-4 py-20">
-        <div className="mb-6" style={{ animation: 'goguma-appear 0.6s cubic-bezier(0.34,1.56,0.64,1) both' }}>
-          <GomuCharacter size={110} />
-        </div>
+        <HomeHero />
         <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 leading-tight">
           우리 동네<br />
           <span className="text-violet-600">고구마켓</span>
@@ -19,17 +20,19 @@ export default function Home() {
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
           <Link
-            href="/signup"
+            href={user ? '/dashboard' : '/signup'}
             className="px-8 py-3 bg-violet-600 text-white rounded-full font-semibold text-base hover:bg-violet-700 transition-colors shadow-md shadow-violet-200"
           >
-            시작하기
+            {user ? '홈으로' : '시작하기'}
           </Link>
-          <Link
-            href="/login"
-            className="px-8 py-3 bg-white text-violet-600 border-2 border-violet-400 rounded-full font-semibold text-base hover:bg-violet-50 transition-colors"
-          >
-            로그인
-          </Link>
+          {!user && (
+            <Link
+              href="/login"
+              className="px-8 py-3 bg-white text-violet-600 border-2 border-violet-400 rounded-full font-semibold text-base hover:bg-violet-50 transition-colors"
+            >
+              로그인
+            </Link>
+          )}
         </div>
       </section>
 
