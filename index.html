@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>가계부</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -431,7 +432,12 @@
     expense: ['식비', '교통', '주거', '의류', '의료', '교육', '문화/여가', '통신', '저축', '기타지출'],
   };
 
-  let transactions = JSON.parse(localStorage.getItem('kaebu') || '[]');
+  const sb = supabase.createClient(
+    'https://noxpdlyutbzraafrugzd.supabase.co',
+    'sb_publishable_ZCfnxWAFtCEiQkArcm6ezA__JDR7UEV'
+  );
+
+  let transactions = [];
 
   // 오늘 날짜 기본값
   const today = new Date().toISOString().slice(0, 10);
@@ -540,7 +546,7 @@
     return CATEGORY_EMOJI[category] || '📌';
   }
 
-  function addTransaction() {
+  async function addTransaction() {
     const date     = document.getElementById('txDate').value;
     const type     = document.getElementById('txType').value;
     const category = document.getElementById('txCategory').value;
@@ -551,17 +557,23 @@
     if (!desc)        { alert('내용을 입력해주세요.'); return; }
     if (!amount || amount <= 0) { alert('올바른 금액을 입력해주세요.'); return; }
 
-    transactions.push({ id: Date.now(), date, type, category, desc, amount });
-    save();
+    const { data, error } = await sb
+      .from('transactions')
+      .insert({ date, type, category, description: desc, amount })
+      .select()
+      .single();
+    if (error) { alert('저장 오류: ' + error.message); return; }
+    transactions.push({ id: data.id, date: data.date, type: data.type, category: data.category, desc: data.description, amount: data.amount });
     document.getElementById('txDesc').value   = '';
     document.getElementById('txAmount').value = '';
     render();
   }
 
-  function deleteTransaction(id) {
+  async function deleteTransaction(id) {
     if (!confirm('삭제하시겠습니까?')) return;
+    const { error } = await sb.from('transactions').delete().eq('id', id);
+    if (error) { alert('삭제 오류: ' + error.message); return; }
     transactions = transactions.filter(t => t.id !== id);
-    save();
     render();
   }
 
@@ -572,11 +584,11 @@
     const input = td.querySelector('input');
     input.focus();
     input.select();
-    const commit = () => {
+    const commit = async () => {
       const val = input.value.trim();
       if (val && val !== tx.desc) {
-        tx.desc = val;
-        save();
+        const { error } = await sb.from('transactions').update({ description: val }).eq('id', tx.id);
+        if (!error) tx.desc = val;
       }
       render();
     };
@@ -585,10 +597,6 @@
       if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
       if (e.key === 'Escape') { render(); }
     });
-  }
-
-  function save() {
-    localStorage.setItem('kaebu', JSON.stringify(transactions));
   }
 
   let catChartInst = null, monthChartInst = null;
@@ -749,7 +757,14 @@
     `).join('');
   }
 
-  render();
+  async function loadTransactions() {
+    const { data, error } = await sb.from('transactions').select('*');
+    if (error) { console.error('로딩 오류:', error); return; }
+    transactions = data.map(d => ({ id: d.id, date: d.date, type: d.type, category: d.category, desc: d.description, amount: d.amount }));
+    render();
+  }
+
+  loadTransactions();
 
   // 계절별 배경 이미지
   (function setSeasonBg() {
