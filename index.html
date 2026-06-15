@@ -179,6 +179,14 @@
       letter-spacing: .4px;
     }
 
+    thead th.sortable {
+      cursor: pointer;
+      user-select: none;
+      transition: color .15s;
+    }
+
+    thead th.sortable:hover { color: #7c3aed; }
+
     tbody tr { border-top: 1px solid #ede9fe; transition: background .15s; }
     tbody tr:hover { background: #faf5ff; }
 
@@ -411,8 +419,8 @@
       <thead>
         <tr>
           <th>날짜</th>
-          <th>구분</th>
-          <th>카테고리</th>
+          <th id="thType" class="sortable" onclick="setSort('type')">구분</th>
+          <th id="thCategory" class="sortable" onclick="setSort('category')">카테고리</th>
           <th>내용</th>
           <th style="text-align:right">금액</th>
           <th></th>
@@ -438,6 +446,17 @@
   );
 
   let transactions = [];
+  let sortState = { col: null, dir: 'asc' };
+
+  function setSort(col) {
+    if (sortState.col === col) {
+      sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+      sortState.col = col;
+      sortState.dir = 'asc';
+    }
+    render();
+  }
 
   // 오늘 날짜 기본값
   const today = new Date().toISOString().slice(0, 10);
@@ -722,7 +741,17 @@
       .filter(t => !month || t.date.startsWith(month))
       .filter(t => typeF === 'all' || t.type === typeF)
       .filter(t => catF  === 'all' || t.category === catF)
-      .sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+      .sort((a, b) => {
+        if (sortState.col) {
+          const cmp = a[sortState.col].localeCompare(b[sortState.col]);
+          return sortState.dir === 'asc' ? cmp : -cmp;
+        }
+        return b.date.localeCompare(a.date) || b.id - a.id;
+      });
+
+    // 정렬 헤더 인디케이터 업데이트
+    document.getElementById('thType').textContent     = (sortState.col === 'type'     ? (sortState.dir === 'asc' ? '▲ ' : '▼ ') : '') + '구분';
+    document.getElementById('thCategory').textContent = (sortState.col === 'category' ? (sortState.dir === 'asc' ? '▲ ' : '▼ ') : '') + '카테고리';
 
     // 요약 (필터 전체 기간 기준)
     const monthTx = transactions.filter(t => !month || t.date.startsWith(month));
