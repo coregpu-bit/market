@@ -27,7 +27,7 @@ export default async function RootLayout({
 
   return (
     <html lang="ko">
-      <body className="min-h-screen bg-orange-50 text-gray-800 antialiased">
+      <body className="min-h-screen bg-violet-50 text-gray-800 antialiased">
         <Navbar user={userInfo} />
         <main>{children}</main>
       </body>

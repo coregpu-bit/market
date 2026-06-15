@@ -17,14 +17,14 @@ export default async function DashboardPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       {/* 환영 배너 */}
-      <div className="bg-gradient-to-r from-orange-400 to-orange-500 rounded-2xl p-6 mb-8 text-white shadow-md shadow-orange-200">
+      <div className="bg-gradient-to-r from-violet-500 to-violet-600 rounded-2xl p-6 mb-8 text-white shadow-md shadow-violet-200">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-orange-100 text-sm mb-1">우리 동네 고구마켓</p>
+            <p className="text-violet-200 text-sm mb-1">우리 동네 고구마켓</p>
             <h2 className="text-2xl font-bold">
               안녕하세요, {nickname}님! 👋
             </h2>
-            <p className="text-orange-100 text-sm mt-1">{user.email}</p>
+            <p className="text-violet-200 text-sm mt-1">{user.email}</p>
           </div>
           <div className="text-6xl opacity-80">🍠</div>
         </div>
@@ -40,11 +40,11 @@ export default async function DashboardPage() {
         ].map((item) => (
           <button
             key={item.label}
-            className="relative bg-white rounded-2xl p-4 text-center border border-orange-100 hover:border-orange-300 hover:shadow-md transition-all"
+            className="relative bg-white rounded-2xl p-4 text-center border border-violet-100 hover:border-violet-300 hover:shadow-md transition-all"
             disabled={item.soon}
           >
             {item.soon && (
-              <span className="absolute top-2 right-2 text-[10px] bg-orange-100 text-orange-500 px-1.5 py-0.5 rounded-full font-medium">
+              <span className="absolute top-2 right-2 text-[10px] bg-violet-100 text-violet-600 px-1.5 py-0.5 rounded-full font-medium">
                 준비중
               </span>
             )}
@@ -56,7 +56,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* 안내 카드 */}
-      <div className="bg-white rounded-2xl border border-orange-100 p-6">
+      <div className="bg-white rounded-2xl border border-violet-100 p-6">
         <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
           <span>🚧</span> 개발 진행 중
         </h3>

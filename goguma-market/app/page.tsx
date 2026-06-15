@@ -11,7 +11,7 @@ export default function Home() {
         </div>
         <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 leading-tight">
           우리 동네<br />
-          <span className="text-orange-500">고구마켓</span>
+          <span className="text-violet-600">고구마켓</span>
         </h1>
         <p className="text-lg text-gray-500 mb-10 max-w-md">
           가까운 이웃과 중고 물건을 사고팔아요.<br />
@@ -20,13 +20,13 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row gap-3">
           <Link
             href="/signup"
-            className="px-8 py-3 bg-orange-500 text-white rounded-full font-semibold text-base hover:bg-orange-600 transition-colors shadow-md shadow-orange-200"
+            className="px-8 py-3 bg-violet-600 text-white rounded-full font-semibold text-base hover:bg-violet-700 transition-colors shadow-md shadow-violet-200"
           >
             시작하기
           </Link>
           <Link
             href="/login"
-            className="px-8 py-3 bg-white text-orange-500 border-2 border-orange-400 rounded-full font-semibold text-base hover:bg-orange-50 transition-colors"
+            className="px-8 py-3 bg-white text-violet-600 border-2 border-violet-400 rounded-full font-semibold text-base hover:bg-violet-50 transition-colors"
           >
             로그인
           </Link>
@@ -47,7 +47,7 @@ export default function Home() {
             ].map((item) => (
               <div
                 key={item.title}
-                className="flex flex-col items-center text-center p-6 rounded-2xl bg-orange-50 hover:bg-orange-100 transition-colors"
+                className="flex flex-col items-center text-center p-6 rounded-2xl bg-violet-50 hover:bg-violet-100 transition-colors"
               >
                 <div className="text-4xl mb-3">{item.emoji}</div>
                 <h3 className="font-bold text-gray-800 mb-1">{item.title}</h3>
